@@ -146,7 +146,7 @@ def main(opt):
     data_name = opt.src
 
     data_loader = get_data_loader(data_name, root_path, tfs=_TFS_DIC[data_name])
-    data_loader_v2 = get_data_loader(opt.tgt, root_path, tfs= _TFS_DIC[opt.tgt])
+    data_loader_v2 = get_data_loader('svhn_transfer', root_path, tfs= _TFS_DIC[opt.tgt])
 
     network = LeNet()
     if opt.epoch == 0:

@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 from usps import USPS
 
 
-_DS_NAME = ['mnist', 'usps', 'svhn', 'office', 'cifar']
+_DS_NAME = ['mnist', 'usps', 'svhn', 'office', 'cifar', 'svhn_transfer']
 _DSS_NAME = ['amazon', 'webcam', 'dslr']
 
 
@@ -48,6 +48,15 @@ def get_data_loader(ds_name, root_path, batch_size=32, tfs=None, train_flag=True
         else:
             # ds = datasets.ImageFolder(os.path.join(root_path, ds_name + "_png/testing/"), transform=tfs)
             ds = ImageFolderWithPaths(os.path.join(root_path, ds_name + "_png/testing/"), transform=tfs)
+    elif ds_name == 'svhn_transfer':
+        # ds = datasets.SVHN(os.path.join(root_path, ds_name), split='train' if train_flag else 'test',
+        #                    transform=tfs, download=True)
+        if train_flag:
+            # ds = datasets.ImageFolder(os.path.join(root_path, ds_name + "_png/training/"), transform=tfs)
+            ds = ImageFolderWithPaths(os.path.join(root_path, ds_name + "/training/"), transform=tfs)
+        else:
+            # ds = datasets.ImageFolder(os.path.join(root_path, ds_name + "_png/testing/"), transform=tfs)
+            ds = ImageFolderWithPaths(os.path.join(root_path, ds_name + "/testing/"), transform=tfs)
     elif ds_name == 'usps':
         ds = USPS(root_path, train=train_flag, transform=tfs, download=True)
     elif ds_name == 'cifar':

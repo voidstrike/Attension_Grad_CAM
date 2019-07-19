@@ -1,4 +1,5 @@
 from torch import nn
+import torch
 import torch.nn.functional as F
 
 
@@ -32,7 +33,7 @@ class LeAE(nn.Module):
 
         res['c3'] = F.relu(self.conv3(res['p2']))
         res['c4'] = F.relu(self.conv4(res['c3']))
-        res['rec'] = F.tanh(self.conv5(res['c4']))
+        res['rec'] = torch.tanh(self.conv5(res['c4']))
         return res
 
     def get_activations_gradient(self):
@@ -66,9 +67,18 @@ class LeDiscriminator(nn.Module):
             nn.Conv2d(128, 256, 4, stride=2, padding=1),
             nn.InstanceNorm2d(256),
             nn.ReLU(),
-            nn.Conv2d(256, 1, 3, stride=1)
+            nn.Conv2d(256, 2, 3, stride=1)
         )
+
+        self.gradient = None
+
+    def activation_hook(self, grad):
+        self.gradient = grad
 
     def forward(self, x):
         res = self.net(x)
-        return res.view(-1, 1)
+        res.register_hook(self.activation_hook)
+        return res.view(-1, 2)
+
+    def get_activations_gradient(self):
+        return self.gradient
